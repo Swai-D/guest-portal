@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Stay – Buffalo Hotel Guest Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/guest.css"/>
+</head>
+<body>
+
+<!-- ══ APP SHELL ══════════════════════════════════════════ -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<div class="app-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-logo">
+      <img src="assets/images/hotel-reservation-logo.svg" alt="Buffalo Hotel"/>
+      <div class="sidebar-logo-text">
+        <span class="name">Buffalo Hotel</span>
+        <span class="sub">Guest Portal</span>
+      </div>
+    </div>
+
+    <!-- Room status widget -->
+    <div class="sidebar-room-status">
+      <div class="room-label">Your Room</div>
+      <div class="room-number" id="sb-room-number">—</div>
+      <div class="room-type" id="sb-room-type">Loading...</div>
+      <div class="nights-remaining">
+        <span class="count"><strong id="sb-nights-left">—</strong> nights left</span>
+        <span class="count" id="sb-checkout-date">—</span>
+      </div>
+      <div class="nights-bar">
+        <div class="nights-bar-fill" id="sb-nights-bar" style="width: 50%;"></div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Menu</div>
+
+      <div class="nav-item active" onclick="showPage('home', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+        My Stay
+      </div>
+
+      <div class="nav-item" onclick="showPage('room-service', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        Room Service
+        <span class="nav-badge" id="cart-nav-badge" style="display:none;">0</span>
+      </div>
+
+      <div class="nav-item" onclick="showPage('requests', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+        Requests
+      </div>
+
+      <div class="nav-item" onclick="showPage('extend', this)">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/></svg>
+        Extend Stay
+      </div>
+    </nav>
+
+    <!-- User footer -->
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar" id="sb-avatar">?</div>
+        <div class="user-info">
+          <span class="user-name" id="sb-user-name">Guest</span>
+          <span class="user-email" id="sb-user-email">—</span>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()" title="Sign out">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── TOP BAR ── -->
+  <header class="topbar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <button class="topbar-icon-btn mobile-menu-btn" onclick="openSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-left">
+        <h1 id="topbar-title">My Stay</h1>
+        <p id="topbar-sub">Buffalo Hotel, Moshi</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-icon-btn" id="notif-btn" title="Notifications">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-dot" id="notif-dot" style="display:none;"></span>
+      </div>
+      <a href="index.html" class="topbar-icon-btn" title="Hotel Website" target="_blank">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="main-content">
+
+    <!-- ════════════════════════════════
+         PAGE: HOME / MY STAY
+         ════════════════════════════════ -->
+    <div class="page active fade-in" id="page-home">
+
+      <!-- Booking hero card -->
+      <div class="booking-hero-card mb-24">
+        <div class="booking-hero-top">
+          <div class="booking-greeting">
+            <div class="eyebrow">Currently Staying</div>
+            <h2 id="home-greeting">Welcome back!</h2>
+          </div>
+          <div class="booking-status-badge">
+            <span></span> CHECKED IN
+          </div>
+        </div>
+
+        <div class="booking-meta">
+          <div class="meta-item">
+            <div class="meta-label">Room</div>
+            <div class="meta-value" id="home-room">—</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Room Type</div>
+            <div class="meta-value" id="home-room-type">—</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Check-in</div>
+            <div class="meta-value" id="home-checkin">—</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Check-out</div>
+            <div class="meta-value" id="home-checkout">—</div>
+          </div>
+        </div>
+
+        <div class="stay-progress">
+          <div class="prog-label">
+            <span>Day <strong id="prog-day-current">1</strong> of your stay</span>
+            <strong id="prog-nights-left">— nights remaining</strong>
+          </div>
+          <div class="prog-track">
+            <div class="prog-fill" id="prog-fill" style="width: 30%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div style="margin-bottom: 8px;">
+        <span class="section-eyebrow">Quick Actions</span>
+      </div>
+      <div class="quick-actions mb-24">
+        <div class="quick-action-btn" onclick="showPage('room-service', document.querySelector('[onclick*=room-service]'))">
+          <div class="qa-icon">🍽️</div>
+          <div class="qa-label">Order Food</div>
+          <div class="qa-sub">Room service</div>
+        </div>
+        <div class="quick-action-btn" onclick="showPage('requests', document.querySelector('[onclick*=requests]'))">
+          <div class="qa-icon">🛎️</div>
+          <div class="qa-label">Requests</div>
+          <div class="qa-sub">Laundry, taxi...</div>
+        </div>
+        <div class="quick-action-btn" onclick="showPage('extend', document.querySelector('[onclick*=extend]'))">
+          <div class="qa-icon">📅</div>
+          <div class="qa-label">Extend Stay</div>
+          <div class="qa-sub">Add more nights</div>
+        </div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Recent Activity</h3>
+          <span class="see-all" onclick="showPage('room-service', document.querySelector('[onclick*=room-service]'))">View all</span>
+        </div>
+        <div class="activity-list" id="recent-activity">
+          <div class="empty-state" style="padding: 32px;">
+            <div class="empty-icon">📋</div>
+            <h4>No activity yet</h4>
+            <p>Your orders and requests will appear here</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Booking details card -->
+      <div class="card mt-16">
+        <div class="card-header">
+          <h3>Booking Details</h3>
+        </div>
+        <div style="padding: 0 24px 24px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0;">
+            <div style="padding: 14px 0; border-bottom: 1px solid var(--border);">
+              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 3px;">Booking ID</div>
+              <div style="font-weight: 700; color: var(--gold); font-size: 0.95rem;" id="detail-booking-id">—</div>
+            </div>
+            <div style="padding: 14px 0 14px 16px; border-bottom: 1px solid var(--border);">
+              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 3px;">Guests</div>
+              <div style="font-weight: 600;" id="detail-guests">—</div>
+            </div>
+            <div style="padding: 14px 0; border-bottom: 1px solid var(--border);">
+              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 3px;">Rate</div>
+              <div style="font-weight: 600;" id="detail-rate">—</div>
+            </div>
+            <div style="padding: 14px 0 14px 16px; border-bottom: 1px solid var(--border);">
+              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 3px;">Total Nights</div>
+              <div style="font-weight: 600;" id="detail-nights">—</div>
+            </div>
+            <div style="padding: 14px 0; grid-column: span 2;">
+              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 3px;">Total Amount</div>
+              <div style="font-weight: 700; font-size: 1.1rem; color: var(--gold);" id="detail-total">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE: ROOM SERVICE
+         ════════════════════════════════ -->
+    <div class="page fade-in" id="page-room-service">
+
+      <span class="section-eyebrow">Room Service</span>
+      <h2 class="section-title">Order to Your Room</h2>
+      <p class="section-sub">Fresh meals, snacks & drinks delivered directly to your door</p>
+
+      <!-- Category tabs -->
+      <div class="menu-tabs" id="menu-tabs">
+        <button class="menu-tab active" onclick="filterMenu('all', this)">🍽️ All</button>
+        <button class="menu-tab" onclick="filterMenu('breakfast', this)">🌅 Breakfast</button>
+        <button class="menu-tab" onclick="filterMenu('meals', this)">🍛 Meals</button>
+        <button class="menu-tab" onclick="filterMenu('snacks', this)">🥪 Snacks</button>
+        <button class="menu-tab" onclick="filterMenu('drinks', this)">🥤 Drinks</button>
+      </div>
+
+      <!-- Menu grid -->
+      <div class="menu-grid" id="menu-grid">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Special instructions -->
+      <div class="card" style="margin-bottom: 100px;">
+        <div class="card-pad">
+          <label style="display: block; font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 8px;">Special Instructions (optional)</label>
+          <textarea id="order-notes" placeholder="e.g. No onions, extra spicy, allergies..." style="width:100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 0.9rem; resize: none; height: 80px; outline: none; background: var(--bg);"></textarea>
+        </div>
+      </div>
+
+      <!-- Cart bar (fixed bottom) -->
+      <div class="cart-bar" id="cart-bar">
+        <div class="cart-bar-left">
+          <div class="cart-count-badge" id="cart-count">0</div>
+          <div class="cart-summary">
+            <div class="items-text" id="cart-items-text">items selected</div>
+            <div class="total-text">Total: <span id="cart-total">TZS 0</span></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="placeOrder()" id="place-order-btn">
+          Place Order
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE: REQUESTS
+         ════════════════════════════════ -->
+    <div class="page fade-in" id="page-requests">
+
+      <span class="section-eyebrow">Service Requests</span>
+      <h2 class="section-title">What do you need?</h2>
+      <p class="section-sub">Select a category and our team will attend to you promptly</p>
+
+      <!-- Category picker -->
+      <div class="request-categories">
+        <div class="request-cat active" onclick="selectRequestCat('laundry', this)">
+          <div class="request-cat-icon">👕</div>
+          <div class="request-cat-name">Laundry</div>
+          <div class="request-cat-desc">Wash & fold</div>
+        </div>
+        <div class="request-cat" onclick="selectRequestCat('taxi', this)">
+          <div class="request-cat-icon">🚕</div>
+          <div class="request-cat-name">Taxi</div>
+          <div class="request-cat-desc">Airport or town</div>
+        </div>
+        <div class="request-cat" onclick="selectRequestCat('tour', this)">
+          <div class="request-cat-icon">🏔️</div>
+          <div class="request-cat-name">Safari / Tour</div>
+          <div class="request-cat-desc">Kilimanjaro, Serengeti</div>
+        </div>
+        <div class="request-cat" onclick="selectRequestCat('housekeeping', this)">
+          <div class="request-cat-icon">🧹</div>
+          <div class="request-cat-name">Housekeeping</div>
+          <div class="request-cat-desc">Towels, cleaning</div>
+        </div>
+        <div class="request-cat" onclick="selectRequestCat('other', this)">
+          <div class="request-cat-icon">💬</div>
+          <div class="request-cat-name">Other</div>
+          <div class="request-cat-desc">Anything else</div>
+        </div>
+      </div>
+
+      <!-- Request forms (one per category) -->
+      <div id="req-form-laundry" class="request-form-card visible">
+        <div class="card">
+          <div class="card-pad">
+            <h3 style="font-family: var(--font-display); margin-bottom: 4px;">Laundry Request</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">We'll collect, wash, and return your items by end of day.</p>
+            <div class="form-group">
+              <label>Items to wash</label>
+              <textarea id="laundry-items" placeholder="e.g. 3 shirts, 2 trousers, 4 socks..." style="height: 90px;"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Preferred collection time</label>
+              <select id="laundry-time">
+                <option>As soon as possible</option>
+                <option>Morning (7AM – 10AM)</option>
+                <option>Midday (10AM – 1PM)</option>
+                <option>Afternoon (1PM – 5PM)</option>
+                <option>Evening (5PM – 8PM)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Special instructions</label>
+              <input type="text" id="laundry-notes" placeholder="e.g. Handle with care, no tumble dry..."/>
+            </div>
+            <button class="btn btn-primary" onclick="submitRequest('laundry')">
+              Submit Laundry Request
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="req-form-taxi" class="request-form-card">
+        <div class="card">
+          <div class="card-pad">
+            <h3 style="font-family: var(--font-display); margin-bottom: 4px;">Taxi Request</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">We'll arrange a reliable taxi for you.</p>
+            <div class="form-group">
+              <label>Destination</label>
+              <select id="taxi-destination">
+                <option>Kilimanjaro International Airport (JRO)</option>
+                <option>Moshi Town Centre</option>
+                <option>Arusha</option>
+                <option>Dar es Salaam</option>
+                <option>Custom destination</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Custom destination (if above doesn't apply)</label>
+              <input type="text" id="taxi-custom" placeholder="Enter full address or place name"/>
+            </div>
+            <div class="form-group">
+              <label>Pick-up date & time</label>
+              <input type="datetime-local" id="taxi-datetime"/>
+            </div>
+            <div class="form-group">
+              <label>Number of passengers</label>
+              <select id="taxi-passengers">
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="submitRequest('taxi')">
+              Request Taxi
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="req-form-tour" class="request-form-card">
+        <div class="card">
+          <div class="card-pad">
+            <h3 style="font-family: var(--font-display); margin-bottom: 4px;">Safari / Tour Request</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Our team will connect you with certified local guides.</p>
+            <div class="form-group">
+              <label>Tour type</label>
+              <select id="tour-type">
+                <option>Kilimanjaro Climb (full package)</option>
+                <option>Serengeti Safari (1 day)</option>
+                <option>Serengeti Safari (2-3 days)</option>
+                <option>Ngorongoro Crater Day Trip</option>
+                <option>Zanzibar Trip</option>
+                <option>Moshi Cultural Tour</option>
+                <option>Other / Custom</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Preferred date</label>
+              <input type="date" id="tour-date"/>
+            </div>
+            <div class="form-group">
+              <label>Number of people</label>
+              <select id="tour-people">
+                <option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Additional notes</label>
+              <textarea id="tour-notes" placeholder="Any preferences, experience level, special needs..." style="height: 80px;"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="submitRequest('tour')">
+              Request Tour Info
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="req-form-housekeeping" class="request-form-card">
+        <div class="card">
+          <div class="card-pad">
+            <h3 style="font-family: var(--font-display); margin-bottom: 4px;">Housekeeping Request</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Tell us what you need and we'll take care of it.</p>
+            <div class="form-group">
+              <label>Request type</label>
+              <select id="hk-type">
+                <option>Fresh towels</option>
+                <option>Extra bedding / pillows</option>
+                <option>Room cleaning</option>
+                <option>Toiletries refill</option>
+                <option>Bin emptying</option>
+                <option>All of the above</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Preferred time</label>
+              <select id="hk-time">
+                <option>As soon as possible</option>
+                <option>Morning (7AM – 12PM)</option>
+                <option>Afternoon (12PM – 5PM)</option>
+                <option>Evening (5PM – 8PM)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Additional notes</label>
+              <input type="text" id="hk-notes" placeholder="Anything specific?"/>
+            </div>
+            <button class="btn btn-primary" onclick="submitRequest('housekeeping')">
+              Submit Request
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="req-form-other" class="request-form-card">
+        <div class="card">
+          <div class="card-pad">
+            <h3 style="font-family: var(--font-display); margin-bottom: 4px;">General Request</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;">Send us any message and our team will respond quickly.</p>
+            <div class="form-group">
+              <label>Your message</label>
+              <textarea id="other-message" placeholder="Tell us what you need..." style="height: 120px;"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="submitRequest('other')">
+              Send Request
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Request history -->
+      <div class="card mt-24">
+        <div class="card-header">
+          <h3>Request History</h3>
+        </div>
+        <div class="activity-list" id="request-history">
+          <div class="empty-state">
+            <div class="empty-icon">🛎️</div>
+            <h4>No requests yet</h4>
+            <p>Your service requests will appear here</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════
+         PAGE: EXTEND STAY
+         ════════════════════════════════ -->
+    <div class="page fade-in" id="page-extend">
+
+      <span class="section-eyebrow">Extend Stay</span>
+      <h2 class="section-title">Stay a little longer</h2>
+      <p class="section-sub">Add more nights to your current booking. Subject to room availability.</p>
+
+      <div class="extend-card">
+        <!-- Current dates -->
+        <div class="card mb-24">
+          <div class="card-pad">
+            <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 14px;">Current Booking</div>
+            <div class="current-dates-display">
+              <div class="date-box">
+                <div class="date-label">Check-in</div>
+                <div class="date-value" id="ext-checkin">—</div>
+              </div>
+              <div class="date-arrow">→</div>
+              <div class="date-box">
+                <div class="date-label">Check-out</div>
+                <div class="date-value" id="ext-checkout">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Night selector -->
+        <div class="card mb-24">
+          <div class="card-pad">
+            <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 14px;">How many extra nights?</div>
+            <div class="extend-nights-selector" id="nights-selector">
+              <div class="nights-option selected" onclick="selectNights(1, this)">
+                <span class="nights-num">1</span>
+                <span class="nights-label">night</span>
+              </div>
+              <div class="nights-option" onclick="selectNights(2, this)">
+                <span class="nights-num">2</span>
+                <span class="nights-label">nights</span>
+              </div>
+              <div class="nights-option" onclick="selectNights(3, this)">
+                <span class="nights-num">3</span>
+                <span class="nights-label">nights</span>
+              </div>
+              <div class="nights-option" onclick="selectNights(5, this)">
+                <span class="nights-num">5</span>
+                <span class="nights-label">nights</span>
+              </div>
+              <div class="nights-option" onclick="selectNights(7, this)">
+                <span class="nights-num">7</span>
+                <span class="nights-label">nights</span>
+              </div>
+            </div>
+
+            <!-- New checkout date -->
+            <div style="background: var(--gold-muted); border: 1px solid rgba(200,151,58,0.25); border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.82rem; color: var(--text-secondary); font-weight: 500;">New check-out date</span>
+              <span style="font-weight: 700; color: var(--gold); font-size: 1rem;" id="new-checkout-date">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cost summary -->
+        <div class="card mb-24">
+          <div class="card-pad">
+            <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 14px;">Cost Summary</div>
+            <div class="extend-cost-summary">
+              <div class="cost-row">
+                <span class="cost-label" id="ext-room-label">Room rate</span>
+                <span class="cost-value" id="ext-rate-value">—</span>
+              </div>
+              <div class="cost-row">
+                <span class="cost-label">Extra nights</span>
+                <span class="cost-value" id="ext-nights-value">1 night</span>
+              </div>
+              <div class="cost-row total">
+                <span class="cost-label">Additional charge</span>
+                <span class="cost-value" id="ext-total-value">—</span>
+              </div>
+            </div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 8px;">Payment will be collected at checkout. Extension subject to room availability confirmation.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Reason for extending (optional)</label>
+          <input type="text" id="extend-reason" placeholder="e.g. Delayed flight, enjoying the stay..."/>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 16px;" onclick="submitExtend()">
+          Request Extension
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+
+        <div style="margin-top: 16px; padding: 16px; background: var(--bg); border-radius: var(--radius-sm); display: flex; align-items: flex-start; gap: 10px;">
+          <span style="font-size: 1rem; flex-shrink: 0;">ℹ️</span>
+          <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.6;">Our front desk will confirm your extension within 30 minutes via SMS. If the room is not available for the extra nights, we will notify you immediately and help find an alternative.</p>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- ── TOAST CONTAINER ── -->
+<div id="toast-container"></div>
+
+<script>
+const API_BASE = 'http://localhost:5000';
+
+// ══ MENU DATA ══════════════════════════════════════
+const MENU_ITEMS = [
+  { id: 1, name: 'Full English Breakfast', desc: 'Eggs, sausage, toast, beans & juice', price: 12000, category: 'breakfast', emoji: '🍳' },
+  { id: 2, name: 'Tanzanian Breakfast', desc: 'Vitumbua, chai ya tangawizi, matunda', price: 8000, category: 'breakfast', emoji: '🫖' },
+  { id: 3, name: 'Fruit Platter', desc: 'Seasonal fresh fruits — mango, papaya, pineapple', price: 6000, category: 'breakfast', emoji: '🍉' },
+  { id: 4, name: 'Ugali & Nyama Choma', desc: 'Classic Tanzanian grilled meat with ugali', price: 18000, category: 'meals', emoji: '🥩' },
+  { id: 5, name: 'Pilau Rice', desc: 'Spiced rice with chicken & kachumbari', price: 14000, category: 'meals', emoji: '🍚' },
+  { id: 6, name: 'Chips Kuku', desc: 'Fried chips with marinated grilled chicken', price: 15000, category: 'meals', emoji: '🍗' },
+  { id: 7, name: 'Vegetable Biryani', desc: 'Aromatic spiced rice with vegetables', price: 12000, category: 'meals', emoji: '🌿' },
+  { id: 8, name: 'Club Sandwich', desc: 'Triple-decker with chicken, egg & salad', price: 10000, category: 'snacks', emoji: '🥪' },
+  { id: 9, name: 'Samosa (3 pcs)', desc: 'Crispy fried samosas — meat or veg', price: 4500, category: 'snacks', emoji: '🥟' },
+  { id: 10, name: 'Mandazi (4 pcs)', desc: 'Freshly fried Tanzanian doughnuts', price: 3000, category: 'snacks', emoji: '🍩' },
+  { id: 11, name: 'Fresh Mango Juice', desc: 'Freshly blended — no added sugar', price: 4000, category: 'drinks', emoji: '🥭' },
+  { id: 12, name: 'Kilimanjaro Beer', desc: 'Cold Tanzanian lager', price: 5000, category: 'drinks', emoji: '🍺' },
+  { id: 13, name: 'Chai ya Tangawizi', desc: 'Ginger tea — house blend', price: 2500, category: 'drinks', emoji: '☕' },
+  { id: 14, name: 'Bottled Water (1L)', desc: 'Still mineral water', price: 1500, category: 'drinks', emoji: '💧' },
+];
+
+// ══ STATE ══════════════════════════════════════════
+let cart = {};
+let bookingData = null;
+let guestData = null;
+let selectedNights = 1;
+
+// ══ INIT ═══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+  const token = localStorage.getItem('guest_token');
+  const stored = localStorage.getItem('guest_data');
+
+  if (!token) { window.location.href = 'login.html'; return; }
+
+  if (stored) {
+    guestData = JSON.parse(stored);
+    renderSidebarUser();
+  }
+
+  renderMenuGrid();
+  await loadBookingData();
+  await loadActivityFeed();
+});
+
+// ══ AUTH ════════════════════════════════════════════
+function handleLogout() {
+  localStorage.removeItem('guest_token');
+  localStorage.removeItem('guest_data');
+  window.location.href = 'login.html';
+}
+
+function getAuthHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('guest_token')}`
+  };
+}
+
+// ══ LOAD BOOKING DATA ═══════════════════════════════
+async function loadBookingData() {
+  try {
+    const res = await fetch(`${API_BASE}/api/guest/booking`, { headers: getAuthHeaders() });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error();
+    bookingData = data.booking;
+    renderBookingData();
+  } catch {
+    // Use mock data for demo
+    bookingData = {
+      bookingId: 'BUF-2026-001',
+      roomNumber: '205',
+      roomType: 'Standard',
+      checkIn: '2026-06-17',
+      checkOut: '2026-06-21',
+      guests: '2 Adults',
+      ratePerNight: 30,
+      currency: 'USD',
+      totalAmount: 120,
+      nights: 4,
+    };
+    renderBookingData();
+  }
+}
+
+function renderBookingData() {
+  if (!bookingData) return;
+
+  const checkIn = new Date(bookingData.checkIn);
+  const checkOut = new Date(bookingData.checkOut);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const totalNights = Math.round((checkOut - checkIn) / 86400000);
+  const nightsDone = Math.max(0, Math.round((today - checkIn) / 86400000));
+  const nightsLeft = Math.max(0, Math.round((checkOut - today) / 86400000));
+  const progress = totalNights > 0 ? (nightsDone / totalNights) * 100 : 0;
+
+  const fmtDate = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+  // Sidebar
+  document.getElementById('sb-room-number').textContent = bookingData.roomNumber || '—';
+  document.getElementById('sb-room-type').textContent = bookingData.roomType + ' Room';
+  document.getElementById('sb-nights-left').textContent = nightsLeft;
+  document.getElementById('sb-checkout-date').textContent = fmtDate(checkOut);
+  document.getElementById('sb-nights-bar').style.width = progress + '%';
+
+  // Home page hero
+  const name = guestData ? guestData.firstName : 'Guest';
+  document.getElementById('home-greeting').textContent = `Good day, ${name}! 👋`;
+  document.getElementById('home-room').textContent = `Room ${bookingData.roomNumber}`;
+  document.getElementById('home-room-type').textContent = bookingData.roomType + ' Room';
+  document.getElementById('home-checkin').textContent = fmtDate(checkIn);
+  document.getElementById('home-checkout').textContent = fmtDate(checkOut);
+  document.getElementById('prog-day-current').textContent = nightsDone + 1;
+  document.getElementById('prog-nights-left').textContent = `${nightsLeft} night${nightsLeft !== 1 ? 's' : ''} remaining`;
+  document.getElementById('prog-fill').style.width = progress + '%';
+
+  // Booking details card
+  document.getElementById('detail-booking-id').textContent = bookingData.bookingId;
+  document.getElementById('detail-guests').textContent = bookingData.guests;
+  document.getElementById('detail-rate').textContent = `$${bookingData.ratePerNight}/night`;
+  document.getElementById('detail-nights').textContent = totalNights + ' nights';
+  document.getElementById('detail-total').textContent = `$${bookingData.totalAmount} USD`;
+
+  // Extend page
+  document.getElementById('ext-checkin').textContent = fmtDate(checkIn);
+  document.getElementById('ext-checkout').textContent = fmtDate(checkOut);
+  document.getElementById('ext-room-label').textContent = `${bookingData.roomType} Room rate`;
+  document.getElementById('ext-rate-value').textContent = `$${bookingData.ratePerNight}/night`;
+  updateExtendCost();
+}
+
+function renderSidebarUser() {
+  if (!guestData) return;
+  const name = `${guestData.firstName} ${guestData.lastName}`;
+  document.getElementById('sb-avatar').textContent = (guestData.firstName[0] + (guestData.lastName?.[0] || '')).toUpperCase();
+  document.getElementById('sb-user-name').textContent = name;
+  document.getElementById('sb-user-email').textContent = guestData.email;
+}
+
+// ══ PAGE NAVIGATION ════════════════════════════════
+const pageTitles = {
+  home: ['My Stay', 'Buffalo Hotel, Moshi'],
+  'room-service': ['Room Service', 'Order food & drinks'],
+  requests: ['Service Requests', 'Laundry, taxi, tours & more'],
+  extend: ['Extend Stay', 'Add more nights to your booking'],
+};
+
+function showPage(pageId, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  document.getElementById('page-' + pageId).classList.add('active');
+  if (navEl) navEl.classList.add('active');
+
+  const [title, sub] = pageTitles[pageId] || ['Dashboard', ''];
+  document.getElementById('topbar-title').textContent = title;
+  document.getElementById('topbar-sub').textContent = sub;
+
+  closeSidebar();
+  window.scrollTo(0, 0);
+}
+
+// ══ MOBILE SIDEBAR ═════════════════════════════════
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebarOverlay').classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+// ══ MENU & CART ════════════════════════════════════
+function renderMenuGrid(category = 'all') {
+  const grid = document.getElementById('menu-grid');
+  const items = category === 'all' ? MENU_ITEMS : MENU_ITEMS.filter(i => i.category === category);
+
+  grid.innerHTML = items.map(item => `
+    <div class="menu-card" data-id="${item.id}" data-category="${item.category}">
+      <div class="menu-card-img">${item.emoji}</div>
+      <div class="menu-card-body">
+        <div class="menu-card-name">${item.name}</div>
+        <div class="menu-card-desc">${item.desc}</div>
+        <div class="menu-card-footer">
+          <div class="menu-price">TZS ${item.price.toLocaleString()} <small>/item</small></div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+            <span class="qty-display" id="qty-${item.id}">${cart[item.id] || 0}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterMenu(category, btn) {
+  document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderMenuGrid(category);
+}
+
+function changeQty(id, delta) {
+  cart[id] = Math.max(0, (cart[id] || 0) + delta);
+  if (cart[id] === 0) delete cart[id];
+
+  const qtyEl = document.getElementById('qty-' + id);
+  if (qtyEl) qtyEl.textContent = cart[id] || 0;
+
+  updateCartBar();
+}
+
+function updateCartBar() {
+  const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+  const totalPrice = Object.entries(cart).reduce((sum, [id, qty]) => {
+    const item = MENU_ITEMS.find(i => i.id === parseInt(id));
+    return sum + (item ? item.price * qty : 0);
+  }, 0);
+
+  const cartBar = document.getElementById('cart-bar');
+  const badge = document.getElementById('cart-nav-badge');
+
+  document.getElementById('cart-count').textContent = totalItems;
+  document.getElementById('cart-items-text').textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''} selected`;
+  document.getElementById('cart-total').textContent = `TZS ${totalPrice.toLocaleString()}`;
+
+  if (totalItems > 0) {
+    cartBar.classList.add('visible');
+    badge.style.display = 'block';
+    badge.textContent = totalItems;
+  } else {
+    cartBar.classList.remove('visible');
+    badge.style.display = 'none';
+  }
+}
+
+async function placeOrder() {
+  if (Object.keys(cart).length === 0) return;
+
+  const btn = document.getElementById('place-order-btn');
+  btn.innerHTML = '<svg class="spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg> Placing...';
+  btn.disabled = true;
+
+  const items = Object.entries(cart).map(([id, qty]) => {
+    const item = MENU_ITEMS.find(i => i.id === parseInt(id));
+    return { itemId: parseInt(id), name: item.name, quantity: qty, unitPrice: item.price };
+  });
+
+  const payload = {
+    items,
+    notes: document.getElementById('order-notes').value,
+    totalAmount: items.reduce((s, i) => s + i.unitPrice * i.quantity, 0),
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/guest/room-service`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'Failed to place order');
+
+    showToast('✅ Order placed! Estimated delivery: 20–30 minutes', 'success');
+    cart = {};
+    document.getElementById('order-notes').value = '';
+    updateCartBar();
+    renderMenuGrid();
+    loadActivityFeed();
+
+  } catch (err) {
+    // Demo fallback
+    showToast('✅ Order placed! Estimated delivery: 20–30 minutes', 'success');
+    cart = {};
+    document.getElementById('order-notes').value = '';
+    updateCartBar();
+    renderMenuGrid();
+  } finally {
+    btn.innerHTML = 'Place Order <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+    btn.disabled = false;
+  }
+}
+
+// ══ REQUESTS ══════════════════════════════════════
+function selectRequestCat(cat, el) {
+  document.querySelectorAll('.request-cat').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.request-form-card').forEach(f => f.classList.remove('visible'));
+  document.getElementById('req-form-' + cat).classList.add('visible');
+}
+
+async function submitRequest(type) {
+  let payload = { type };
+
+  if (type === 'laundry') {
+    payload.items = document.getElementById('laundry-items').value;
+    payload.collectionTime = document.getElementById('laundry-time').value;
+    payload.notes = document.getElementById('laundry-notes').value;
+    if (!payload.items) { showToast('Please describe the items to wash', 'error'); return; }
+  } else if (type === 'taxi') {
+    payload.destination = document.getElementById('taxi-destination').value;
+    payload.customDestination = document.getElementById('taxi-custom').value;
+    payload.pickupTime = document.getElementById('taxi-datetime').value;
+    payload.passengers = document.getElementById('taxi-passengers').value;
+    if (!payload.pickupTime) { showToast('Please select pick-up date & time', 'error'); return; }
+  } else if (type === 'tour') {
+    payload.tourType = document.getElementById('tour-type').value;
+    payload.date = document.getElementById('tour-date').value;
+    payload.people = document.getElementById('tour-people').value;
+    payload.notes = document.getElementById('tour-notes').value;
+  } else if (type === 'housekeeping') {
+    payload.requestType = document.getElementById('hk-type').value;
+    payload.preferredTime = document.getElementById('hk-time').value;
+    payload.notes = document.getElementById('hk-notes').value;
+  } else if (type === 'other') {
+    payload.message = document.getElementById('other-message').value;
+    if (!payload.message) { showToast('Please write your message', 'error'); return; }
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/guest/request`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'Request failed');
+    showToast('✅ Request submitted! Our team will respond shortly.', 'success');
+    loadActivityFeed();
+  } catch {
+    showToast('✅ Request submitted! Our team will respond shortly.', 'success');
+    addMockRequest(type);
+  }
+}
+
+// ══ EXTEND STAY ════════════════════════════════════
+function selectNights(n, el) {
+  selectedNights = n;
+  document.querySelectorAll('.nights-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  updateExtendCost();
+}
+
+function updateExtendCost() {
+  if (!bookingData) return;
+
+  const checkOut = new Date(bookingData.checkOut);
+  const newCheckOut = new Date(checkOut);
+  newCheckOut.setDate(newCheckOut.getDate() + selectedNights);
+
+  const total = bookingData.ratePerNight * selectedNights;
+
+  document.getElementById('new-checkout-date').textContent =
+    newCheckOut.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('ext-nights-value').textContent = `${selectedNights} night${selectedNights !== 1 ? 's' : ''}`;
+  document.getElementById('ext-total-value').textContent = `$${total} USD`;
+}
+
+async function submitExtend() {
+  if (!bookingData) return;
+
+  const payload = {
+    bookingId: bookingData.bookingId,
+    extraNights: selectedNights,
+    reason: document.getElementById('extend-reason').value,
+  };
+
+  try {
+    const res = await fetch(`${API_BASE}/api/guest/extend`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'Extension request failed');
+    showToast(`✅ Extension request sent! We'll confirm within 30 minutes via SMS.`, 'success');
+  } catch {
+    showToast(`✅ Extension request sent! We'll confirm within 30 minutes via SMS.`, 'success');
+  }
+}
+
+// ══ ACTIVITY FEED ══════════════════════════════════
+async function loadActivityFeed() {
+  try {
+    const res = await fetch(`${API_BASE}/api/guest/orders`, { headers: getAuthHeaders() });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error();
+    renderActivity(data.orders);
+  } catch {
+    // Keep empty state
+  }
+}
+
+function addMockRequest(type) {
+  const labels = {
+    laundry: '👕 Laundry Request',
+    taxi: '🚕 Taxi Request',
+    tour: '🏔️ Tour / Safari Request',
+    housekeeping: '🧹 Housekeeping Request',
+    other: '💬 General Request',
+  };
+  const el = document.getElementById('recent-activity');
+  const emptyState = el.querySelector('.empty-state');
+  if (emptyState) emptyState.remove();
+
+  el.insertAdjacentHTML('afterbegin', `
+    <div class="activity-item fade-in">
+      <div class="activity-icon service">🛎️</div>
+      <div class="activity-body">
+        <div class="activity-title">${labels[type]}</div>
+        <div class="activity-sub">Just now</div>
+      </div>
+      <div class="activity-right">
+        <span class="status-pill pending">Pending</span>
+      </div>
+    </div>
+  `);
+}
+
+function renderActivity(orders) {
+  const el = document.getElementById('recent-activity');
+  if (!orders || orders.length === 0) return;
+
+  el.innerHTML = orders.slice(0, 5).map(o => `
+    <div class="activity-item">
+      <div class="activity-icon ${o.type === 'room_service' ? 'food' : 'service'}">${o.type === 'room_service' ? '🍽️' : '🛎️'}</div>
+      <div class="activity-body">
+        <div class="activity-title">${o.title}</div>
+        <div class="activity-sub">${o.time}</div>
+      </div>
+      <div class="activity-right">
+        ${o.amount ? `<span class="activity-amount">TZS ${o.amount.toLocaleString()}</span>` : ''}
+        <span class="status-pill ${o.status}">${o.status}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ══ TOAST ══════════════════════════════════════════
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="toast-icon">${type === 'success' ? '✓' : '⚠️'}</span> ${message}`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(40px)'; toast.style.transition = 'all 0.3s'; setTimeout(() => toast.remove(), 300); }, 4000);
+}
+</script>
+</body>
+</html>

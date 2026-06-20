@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payment Successful – Buffalo Hotel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/guest.css"/>
+</head>
+<body style="background: var(--bg); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 24px;">
+
+  <div style="max-width: 520px; width: 100%; background: var(--surface); border-radius: var(--radius-lg); padding: 48px 40px; text-align: center; box-shadow: var(--shadow-lg); border: 1px solid var(--border);">
+
+    <div style="width: 80px; height: 80px; background: #F0FDF4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 2.5rem;">🎉</div>
+
+    <div style="display: inline-flex; align-items: center; gap: 6px; background: #F0FDF4; border: 1px solid rgba(22,163,74,0.3); color: #16A34A; font-size: 0.75rem; font-weight: 700; padding: 5px 14px; border-radius: 100px; letter-spacing: 0.06em; margin-bottom: 20px;">
+      <span style="width: 6px; height: 6px; background: #16A34A; border-radius: 50; display: inline-block;"></span>
+      BOOKING CONFIRMED
+    </div>
+
+    <h1 style="font-family: var(--font-display); font-size: 1.8rem; margin-bottom: 8px; color: var(--text-primary);">You're all set!</h1>
+    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 32px;">Your payment was successful and your room at Buffalo Hotel is confirmed. We look forward to welcoming you!</p>
+
+    <!-- Booking summary -->
+    <div style="background: var(--bg); border-radius: var(--radius); padding: 20px; text-align: left; margin-bottom: 28px;">
+      <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 14px;">Booking Summary</div>
+      <div id="booking-summary">
+        <div style="display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.875rem;">
+          <span style="color: var(--text-secondary);">Booking Reference</span>
+          <strong style="color: var(--gold);" id="ps-booking-id">—</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.875rem;">
+          <span style="color: var(--text-secondary);">Hotel</span>
+          <strong>Buffalo Hotel, Moshi</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 0.875rem;">
+          <span style="color: var(--text-secondary);">Status</span>
+          <strong style="color: #16A34A;">✓ Confirmed</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 9px 0; font-size: 0.875rem;">
+          <span style="color: var(--text-secondary);">Guest Portal</span>
+          <strong style="color: var(--gold);">Activated ✓</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info note -->
+    <div style="background: rgba(200,151,58,0.08); border: 1px solid rgba(200,151,58,0.2); border-radius: var(--radius-sm); padding: 14px 16px; text-align: left; margin-bottom: 28px; display: flex; gap: 10px;">
+      <span style="font-size: 1rem; flex-shrink: 0;">📱</span>
+      <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6;">An SMS has been sent to your phone with your booking details and a link to activate your guest dashboard account.</p>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <a href="dashboard.html" class="btn btn-primary btn-full">
+        Open Guest Dashboard
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+      <a href="../index.html" class="btn btn-ghost btn-full">← Back to Hotel Website</a>
+    </div>
+
+    <p style="margin-top: 24px; font-size: 0.78rem; color: var(--text-muted);">Questions? Call us anytime: <a href="tel:+255000000000" style="color: var(--gold); font-weight: 600;">+255 XXX XXX XXX</a></p>
+
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const bookingId = params.get('bookingId');
+    if (bookingId) {
+      document.getElementById('ps-booking-id').textContent = bookingId;
+    }
+  </script>
+</body>
+</html>

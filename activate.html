@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Activate Account – Buffalo Hotel Guest Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/guest.css"/>
+</head>
+<body>
+
+<div class="auth-page">
+
+  <div class="auth-panel-left">
+    <div class="auth-logo">
+      <img src="assets/images/hotel-reservation-logo.svg" alt="Buffalo Hotel"/>
+      <div class="auth-logo-text">
+        <span class="name">Buffalo Hotel</span>
+        <span class="sub">Guest Portal</span>
+      </div>
+    </div>
+    <div class="auth-hero-text">
+      <h1>One step away<br/>from your<br/><em>dashboard</em></h1>
+      <p style="margin-top: 20px;">Set a password to access your guest dashboard. You only need to do this once.</p>
+    </div>
+    <div style="font-size: 0.75rem; color: rgba(255,255,255,0.2);">© 2026 Buffalo Hotel · Moshi, Kilimanjaro</div>
+  </div>
+
+  <div class="auth-panel-right">
+    <div class="auth-form-wrap">
+
+      <!-- Loading state -->
+      <div id="step-loading" style="text-align: center; padding: 40px 0;">
+        <svg class="spin" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>
+        <p style="color: var(--text-muted); margin-top: 16px; font-size: 0.9rem;">Verifying your link...</p>
+      </div>
+
+      <!-- Invalid token -->
+      <div id="step-invalid" style="display: none; text-align: center; padding: 20px 0;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">❌</div>
+        <h2 style="margin-bottom: 8px;">Link Expired</h2>
+        <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 0.9rem;">This activation link has expired or already been used. Please contact the hotel to get a new one.</p>
+        <a href="login.html" class="btn btn-primary">Back to Login</a>
+        <br/><br/>
+        <a href="tel:+255000000000" style="font-size: 0.82rem; color: var(--gold);">📞 Call us: +255 XXX XXX XXX</a>
+      </div>
+
+      <!-- Set password form -->
+      <div id="step-activate" style="display: none;">
+        <div style="margin-bottom: 28px;">
+          <div id="guest-welcome" style="display: inline-flex; align-items: center; gap: 10px; background: var(--gold-muted); border: 1px solid rgba(200,151,58,0.2); border-radius: 100px; padding: 8px 16px; font-size: 0.82rem; color: var(--gold); font-weight: 600; margin-bottom: 20px;"></div>
+          <h2>Set your password</h2>
+          <p>Create a secure password to access your guest dashboard</p>
+        </div>
+
+        <div id="activate-error" style="display:none; background: var(--red-bg); border: 1.5px solid rgba(220,38,38,0.2); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 0.875rem; color: var(--red); margin-bottom: 20px;"></div>
+
+        <div class="form-group">
+          <label>New Password</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="new-password" placeholder="Minimum 8 characters" autocomplete="new-password"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <div class="input-icon-wrap">
+            <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input type="password" id="confirm-password" placeholder="Re-enter password" autocomplete="new-password"/>
+          </div>
+        </div>
+
+        <!-- Password strength -->
+        <div style="margin-top: -12px; margin-bottom: 20px;">
+          <div style="height: 4px; background: var(--border); border-radius: 100px; overflow: hidden;">
+            <div id="strength-bar" style="height: 100%; width: 0%; border-radius: 100px; transition: all 0.3s;"></div>
+          </div>
+          <p id="strength-label" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;"></p>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="activate-btn" onclick="handleActivate()">
+          Activate Account & Sign In
+        </button>
+      </div>
+
+      <!-- Success -->
+      <div id="step-success" style="display: none; text-align: center; padding: 20px 0;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">🎉</div>
+        <h2 style="margin-bottom: 8px;">Account Activated!</h2>
+        <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 0.9rem;">Welcome to Buffalo Hotel. Redirecting you to your dashboard...</p>
+        <div style="display: flex; justify-content: center;">
+          <svg class="spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:5000';
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+
+  // Verify token on load
+  window.addEventListener('DOMContentLoaded', async () => {
+    if (!token) { showInvalid(); return; }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/guest/activate/verify?token=${token}`);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) throw new Error();
+
+      // Show activate form with guest name
+      document.getElementById('step-loading').style.display = 'none';
+      document.getElementById('step-activate').style.display = 'block';
+      document.getElementById('guest-welcome').textContent = `👋 Hi, ${data.firstName}!`;
+
+    } catch {
+      showInvalid();
+    }
+  });
+
+  function showInvalid() {
+    document.getElementById('step-loading').style.display = 'none';
+    document.getElementById('step-invalid').style.display = 'block';
+  }
+
+  // Password strength
+  document.addEventListener('DOMContentLoaded', () => {
+    const pwInput = document.getElementById('new-password');
+    if (pwInput) {
+      pwInput.addEventListener('input', () => {
+        const val = pwInput.value;
+        const bar = document.getElementById('strength-bar');
+        const label = document.getElementById('strength-label');
+        let score = 0;
+        if (val.length >= 8) score++;
+        if (/[A-Z]/.test(val)) score++;
+        if (/[0-9]/.test(val)) score++;
+        if (/[^A-Za-z0-9]/.test(val)) score++;
+        const levels = [
+          { w: '0%', c: 'transparent', t: '' },
+          { w: '25%', c: '#DC2626', t: 'Weak' },
+          { w: '50%', c: '#D97706', t: 'Fair' },
+          { w: '75%', c: '#2563EB', t: 'Good' },
+          { w: '100%', c: '#16A34A', t: 'Strong' },
+        ];
+        bar.style.width = levels[score].w;
+        bar.style.background = levels[score].c;
+        label.textContent = levels[score].t;
+        label.style.color = levels[score].c;
+      });
+    }
+  });
+
+  async function handleActivate() {
+    const password = document.getElementById('new-password').value;
+    const confirm = document.getElementById('confirm-password').value;
+    const btn = document.getElementById('activate-btn');
+    const errEl = document.getElementById('activate-error');
+
+    errEl.style.display = 'none';
+
+    if (!password || password.length < 8) {
+      errEl.textContent = 'Password must be at least 8 characters.';
+      errEl.style.display = 'block'; return;
+    }
+    if (password !== confirm) {
+      errEl.textContent = 'Passwords do not match.';
+      errEl.style.display = 'block'; return;
+    }
+
+    btn.innerHTML = '<svg class="spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg> Activating...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/guest/activate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, password })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Activation failed.');
+
+      localStorage.setItem('guest_token', data.token);
+      localStorage.setItem('guest_data', JSON.stringify(data.guest));
+
+      document.getElementById('step-activate').style.display = 'none';
+      document.getElementById('step-success').style.display = 'block';
+
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 2000);
+
+    } catch (err) {
+      errEl.textContent = '⚠️ ' + err.message;
+      errEl.style.display = 'block';
+      btn.innerHTML = 'Activate Account & Sign In';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
